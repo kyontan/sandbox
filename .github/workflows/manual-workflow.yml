@@ -32,6 +32,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+      - name: Print secret value
+        run: echo $SECRET_ENV
 
       # Runs a set of commands using the runners shell
 #       - name: Run a multi-line script
