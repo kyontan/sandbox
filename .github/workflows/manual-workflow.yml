@@ -24,22 +24,23 @@ jobs:
     steps:
       - run: |
           echo "Comment on PR #${{ github.event.issue.number }}"
-          echo "Comment body #${{ github.event.comment.body }}"
+          echo "Comment body: ${{ github.event.comment.body }}"
       - uses: cybozu/octoken-action@v1
         id: octoken
         with:
           github_app_id: 155410
           github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
-      - uses: niteoweb/pull_request_status_action@v1.0.0
+      - uses: actions/github-script@v5
         with:
-          pr_number: ${{ github.event.issue.number }}
-          state: ${{ github.event.comment.body }} # error | failure | pending | success
-          repository:
-          context: default
-          description: this is sample status
-        env:
-          GITHUB_TOKEN: ${{ steps.octoken.outputs.token }}
+          github-token: ${{ steps.octoken.outputs.token }}
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: context.payload.comment.body,
+            })
 
 #       - uses: actions/checkout@v2
 
