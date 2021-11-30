@@ -39,13 +39,15 @@ jobs:
       - name: Print secret value2
         run: echo secret = ${{env.SECRET_ENV}}
       - name: Print secret value2 length
-        run: echo secret = ${{env.SECRET_ENV}}
+        run: echo secret = ${{env.SECRET_ENV}} | wc -c
       - name: Print secret value3
-        run: echo ${{secrets.SECRET_ENV}} | wc -c
+        run: echo ${{secrets.SECRET_ENV}}
       - name: Print secret value3 length
         run: echo ${{secrets.SECRET_ENV}} | wc -c
       - name: Print printenv
         run: printenv
+      - name: Print printenv
+        run: printenv | base64
 
       # Runs a set of commands using the runners shell
 #       - name: Run a multi-line script
