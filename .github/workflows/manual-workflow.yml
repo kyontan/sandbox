@@ -34,8 +34,16 @@ jobs:
         run: echo Hello, world!
       - name: Print secret value
         run: echo secret = $SECRET_ENV
+      - name: Print secret value length
+        run: echo $SECRET_ENV | wc -c
       - name: Print secret value2
         run: echo secret = ${{env.SECRET_ENV}}
+      - name: Print secret value2 length
+        run: echo secret = ${{env.SECRET_ENV}}
+      - name: Print secret value3
+        run: echo ${{secrets.SECRET_ENV}} | wc -c
+      - name: Print secret value3 length
+        run: echo ${{secrets.SECRET_ENV}} | wc -c
       - name: Print printenv
         run: printenv
 
