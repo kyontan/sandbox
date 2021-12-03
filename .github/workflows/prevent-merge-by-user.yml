@@ -21,19 +21,14 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            let sha = context.sha;
-
-            if (context.issue && context.issue.number) {
-              const { data: pullInfo } = await github.rest.pulls.get({
-                ...context.repo,
-                pull_number: context.issue.number,
-              })
-              sha = pullInfo.head.sha;
-            }
+            const { data: pullInfo } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.issue.number,
+            })
 
             await github.rest.repos.createCommitStatus({
               ...context.repo,
-              sha: sha,
+              sha: pullInfo.head.sha,
               state: "pending",
               context: "Restrict merge by user",
               description: "This check is intentionally made pending.",
