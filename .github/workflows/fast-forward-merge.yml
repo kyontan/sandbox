@@ -111,7 +111,7 @@ jobs:
             await github.rest.repos.createCommitStatus({
               ...context.repo,
               sha: pullInfo.head.sha,
-              state: "SUCCESS",
+              state: "success",
             })
 
             await github.rest.git.updateRef({
@@ -122,9 +122,9 @@ jobs:
 
 #       - uses: actions/checkout@v2
 
-      - name: Print secret value
-        run: |
-          echo secret = ${{env.SECRET_ENV}}
-          echo secret = ${{env.SECRET_ENV}} | wc -c
+      # - name: Print secret value
+      #   run: |
+      #     echo secret = ${{env.SECRET_ENV}}
+      #     echo secret = ${{env.SECRET_ENV}} | wc -c
       # - name: Print printenv
       #   run: printenv
