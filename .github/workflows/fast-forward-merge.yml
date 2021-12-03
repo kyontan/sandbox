@@ -37,7 +37,6 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            console.log(`url: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
@@ -77,7 +76,6 @@ jobs:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
             const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            console.log(`url: ${url}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
@@ -100,6 +98,13 @@ jobs:
                 sha: pullInfo.head.sha,
               })
             } catch (err) {
+              if (err.message) {
+                await github.rest.issues.createComment({
+                  ...context.repo,
+                  issue_number: context.issue.number,
+                  body: `### :x: Merging failed\nMessage: ${err.message}`,
+                })
+              }
               // revert commit status
               await github.rest.repos.createCommitStatus({
                 ...context.repo,
