@@ -37,7 +37,7 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            console.log(`url: ${context.serverUrl}/${context.repo.repo}/${context.repo.owner}/actions/runs/${context.runId}`);
+            console.log(`url: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
@@ -76,7 +76,7 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            const url = `${context.serverUrl}/${context.repo.repo}/${context.repo.owner}/actions/runs/${context.runId}`;
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             console.log(`url: ${url}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
