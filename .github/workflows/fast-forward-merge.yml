@@ -37,7 +37,7 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            console.log("url: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID");
+            console.log(`url: ${context.serverUrl}/${context.repo.repo}/${context.repo.owner}/actions/runs/${context.runId}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
@@ -76,7 +76,8 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
-            console.log("url: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID");
+            const url = `${context.serverUrl}/${context.repo.repo}/${context.repo.owner}/actions/runs/${context.runId}`;
+            console.log(`url: ${url}`);
 
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
@@ -106,7 +107,7 @@ jobs:
                 state: "failure",
                 context: "Restrict merge by user", // NOTE: This should match to the `prevent-merge-by-user` workflow.
                 description: "Merging process failed for some reason. See details",
-                target_url: "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID",
+                target_url: url,
               })
 
               throw err;
