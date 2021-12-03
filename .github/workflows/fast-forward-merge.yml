@@ -82,10 +82,12 @@ jobs:
             const howToAutomerge = "\n\nIf you **really** ignore this and want to merge, use `/force-merge`.";
             let failedReason = null;
 
-            if (reviewStates.indexOf("APPROVED") == -1) {
-              failedReason = "not approved by anyone";
+            if (pullInfo.merged) {
+              failedReason = "This PR is already merged"
+            } else if (reviewStates.indexOf("APPROVED") == -1) {
+              failedReason = "This PR is not approved by anyone";
             } else if (reviewStates.indexOf("REQUEST_CHANGES") != -1) {
-              failedReason = "someone requests changes";
+              failedReason = "Someone requests changes";
             }
 
             if (failedReason != null) {
