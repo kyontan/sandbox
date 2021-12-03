@@ -19,7 +19,7 @@ jobs:
   edit-status:
     if: |
       github.event.issue.pull_request &&
-      (github.event.comment.body == "success" || github.event.comment.body == "pending" || github.event.comment.body == "failure")
+      (github.event.comment.body == 'success' || github.event.comment.body == 'pending' || github.event.comment.body == 'failure')
     runs-on: ubuntu-latest
 
     steps:
@@ -49,7 +49,7 @@ jobs:
   merge:
     if: |
       github.event.issue.pull_request &&
-      (github.event.comment.body == "/merge" || github.event.comment.body == "/force-merge")
+      (github.event.comment.body == '/merge' || github.event.comment.body == '/force-merge')
     runs-on: ubuntu-latest
 
     steps:
@@ -62,7 +62,7 @@ jobs:
           github_app_id: 155410
           github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
-      - if: github.event.comment.body != "/force-merge"
+      - if: github.event.comment.body != '/force-merge'
         uses: actions/github-script@v5
         with:
           github-token: ${{ steps.octoken.outputs.token }}
