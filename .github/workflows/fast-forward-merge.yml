@@ -80,23 +80,22 @@ jobs:
             const reviewStates = reviewInfo.map(x => x.state)
 
             const howToAutomerge = "\n\nIf you **really** ignore this and want to merge, use `/force-merge`.";
+            let failedReason = null;
 
             if (reviewStates.indexOf("APPROVED") == -1) {
-              // not approved by anyone
-              await github.rest.issues.createComment({
-                ...context.repo,
-                issue_number: context.issue.number,
-                body: "### :x: Merging failed\nReason:\n- Not approved by anyone" + howToAutomerge,
-              })
+              failedReason = "not approved by anyone";
+            } else if (reviewStates.indexOf("REQUEST_CHANGES") == -1) {
+              failedReason = "someone requests changes";
             }
 
-            if (reviewStates.indexOf("REQUEST_CHANGES") == -1) {
-              // someone requests changes
+            if (failedReason != null) {
               await github.rest.issues.createComment({
                 ...context.repo,
                 issue_number: context.issue.number,
-                body: "### :x: Merging failed\nReason:\n- Someone requests changes" + howToAutomerge,
+                body: `### :x: Merging failed\nReason:\n- ${failedReason}${howToAutomerge}`,
               })
+
+              throw new Error(failedReason);
             }
 
       - uses: actions/github-script@v5
