@@ -72,7 +72,7 @@ jobs:
               pull_number: context.issue.number,
             })
 
-            const { data: reviewInfo } = await appOctokit.pulls.listReviews({
+            const { data: reviewInfo } = await github.rest.pulls.listReviews({
               ...context.repo,
               pull_number: context.issue.number,
             })
