@@ -3,7 +3,8 @@ name: prevent-merge-by-user
 on:
   pull_request:
     types:
-    - create
+    - opened
+    - reopened
     - synchronize # push on a created pull request
 
 jobs:
