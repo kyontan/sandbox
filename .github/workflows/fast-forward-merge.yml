@@ -16,36 +16,6 @@ on:
   #       type: environment
 
 jobs:
-  edit-status:
-    if: |
-      github.event.issue.pull_request &&
-      (github.event.comment.body == 'success' || github.event.comment.body == 'pending' || github.event.comment.body == 'failure')
-    runs-on: ubuntu-latest
-
-    steps:
-      - run: |
-          echo "Comment on PR #${{ github.event.issue.number }}"
-          echo "Comment body: ${{ github.event.comment.body }}"
-      - uses: cybozu/octoken-action@v1
-        id: octoken
-        with:
-          github_app_id: 155410
-          github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
-      - uses: actions/github-script@v5
-        with:
-          github-token: ${{ steps.octoken.outputs.token }}
-          script: |
-            const { data: pullInfo } = await github.rest.pulls.get({
-              ...context.repo,
-              pull_number: context.issue.number,
-            })
-
-            await github.rest.repos.createCommitStatus({
-              ...context.repo,
-              sha: pullInfo.head.sha,
-              state: context.payload.comment.body,
-            })
   merge:
     if: |
       github.event.issue.pull_request &&
