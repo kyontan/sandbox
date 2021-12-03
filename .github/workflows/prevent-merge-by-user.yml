@@ -3,7 +3,8 @@ name: prevent-merge-by-user
 on:
   pull_request:
     types:
-    - create
+    - opened
+    - reopened
     - synchronize # push on a created pull request
 
 jobs:
@@ -31,6 +32,6 @@ jobs:
               sha: pullInfo.head.sha,
               state: "pending",
               context: "Restrict merge by user",
-              description: "This check is intentionally made pending.",
+              description: "This check is intentionally made pending.  See details for help",
               target_url: "https://example.com/doc-why-this-is-pending",
             })
