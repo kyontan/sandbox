@@ -37,6 +37,8 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
+            console.log("url: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID");
+
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
               pull_number: context.issue.number,
