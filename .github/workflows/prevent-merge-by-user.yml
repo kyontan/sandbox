@@ -1,8 +1,9 @@
 name: prevent-merge-by-user
 
 on:
-  push:
   pull_request:
+  - create
+  - synchronize # push on a created pull request
 
 jobs:
   edit-status:
