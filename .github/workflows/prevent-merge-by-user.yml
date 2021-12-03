@@ -2,8 +2,9 @@ name: prevent-merge-by-user
 
 on:
   pull_request:
-  - create
-  - synchronize # push on a created pull request
+    types:
+    - create
+    - synchronize # push on a created pull request
 
 jobs:
   edit-status:
