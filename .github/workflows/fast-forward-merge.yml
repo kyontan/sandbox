@@ -98,6 +98,13 @@ jobs:
                 sha: pullInfo.head.sha,
               })
             } catch (err) {
+              if (err.message) {
+                await github.rest.issues.createComment({
+                  ...context.repo,
+                  issue_number: context.issue.number,
+                  body: `### :x: Merging failed\nMessage: ${err.message}`,
+                })
+              }
               // revert commit status
               await github.rest.repos.createCommitStatus({
                 ...context.repo,
