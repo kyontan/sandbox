@@ -84,7 +84,7 @@ jobs:
 
             if (reviewStates.indexOf("APPROVED") == -1) {
               failedReason = "not approved by anyone";
-            } else if (reviewStates.indexOf("REQUEST_CHANGES") == -1) {
+            } else if (reviewStates.indexOf("REQUEST_CHANGES") != -1) {
               failedReason = "someone requests changes";
             }
 
