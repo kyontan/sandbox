@@ -104,6 +104,8 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
+            console.log("url: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID");
+
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
               pull_number: context.issue.number,
@@ -113,14 +115,30 @@ jobs:
               ...context.repo,
               sha: pullInfo.head.sha,
               state: "success",
+              context: "Restrict merge by user", // NOTE: This should match to the `prevent-merge-by-user` workflow.
+              description: "Don't push merge button! Merging will be done by bot.",
+              target_url: "https://example.com/doc-why-this-is-pending",
             })
 
-            await github.rest.git.updateRef({
-              ...context.repo,
-              ref: `heads/${pullInfo.base.ref}`,
-              sha: pullInfo.head.sha,
-            })
+            try {
+              await github.rest.git.updateRef({
+                ...context.repo,
+                ref: `heads/${pullInfo.base.ref}`,
+                sha: pullInfo.head.sha,
+              })
+            } catch (err) {
+              // revert commit status
+              await github.rest.repos.createCommitStatus({
+                ...context.repo,
+                sha: pullInfo.head.sha,
+                state: "failure",
+                context: "Restrict merge by user", // NOTE: This should match to the `prevent-merge-by-user` workflow.
+                description: "Merging process failed for some reason. See details",
+                target_url: "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID",
+              })
 
+              throw err;
+            }
 #       - uses: actions/checkout@v2
 
       # - name: Print secret value
