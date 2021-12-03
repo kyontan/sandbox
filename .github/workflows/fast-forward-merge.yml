@@ -1,4 +1,4 @@
-name: manual-workflow
+name: fast-forward-merge
 
 on:
   issue_comment:
@@ -16,36 +16,6 @@ on:
   #       type: environment
 
 jobs:
-  edit-status:
-    if: |
-      github.event.issue.pull_request &&
-      (github.event.comment.body == 'success' || github.event.comment.body == 'pending' || github.event.comment.body == 'failure')
-    runs-on: ubuntu-latest
-
-    steps:
-      - run: |
-          echo "Comment on PR #${{ github.event.issue.number }}"
-          echo "Comment body: ${{ github.event.comment.body }}"
-      - uses: cybozu/octoken-action@v1
-        id: octoken
-        with:
-          github_app_id: 155410
-          github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
-      - uses: actions/github-script@v5
-        with:
-          github-token: ${{ steps.octoken.outputs.token }}
-          script: |
-            const { data: pullInfo } = await github.rest.pulls.get({
-              ...context.repo,
-              pull_number: context.issue.number,
-            })
-
-            await github.rest.repos.createCommitStatus({
-              ...context.repo,
-              sha: pullInfo.head.sha,
-              state: context.payload.comment.body,
-            })
   merge:
     if: |
       github.event.issue.pull_request &&
@@ -67,6 +37,8 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
+            console.log(`url: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`);
+
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
               pull_number: context.issue.number,
@@ -104,6 +76,9 @@ jobs:
         with:
           github-token: ${{ steps.octoken.outputs.token }}
           script: |
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            console.log(`url: ${url}`);
+
             const { data: pullInfo } = await github.rest.pulls.get({
               ...context.repo,
               pull_number: context.issue.number,
@@ -113,14 +88,30 @@ jobs:
               ...context.repo,
               sha: pullInfo.head.sha,
               state: "success",
+              context: "Restrict merge by user", // NOTE: This should match to the `prevent-merge-by-user` workflow.
+              description: "Don't push merge button! Merging will be done by bot.",
+              target_url: "https://example.com/doc-why-this-is-pending",
             })
 
-            await github.rest.git.updateRef({
-              ...context.repo,
-              ref: `heads/${pullInfo.base.ref}`,
-              sha: pullInfo.head.sha,
-            })
+            try {
+              await github.rest.git.updateRef({
+                ...context.repo,
+                ref: `heads/${pullInfo.base.ref}`,
+                sha: pullInfo.head.sha,
+              })
+            } catch (err) {
+              // revert commit status
+              await github.rest.repos.createCommitStatus({
+                ...context.repo,
+                sha: pullInfo.head.sha,
+                state: "failure",
+                context: "Restrict merge by user", // NOTE: This should match to the `prevent-merge-by-user` workflow.
+                description: "Merging process failed for some reason. See details",
+                target_url: url,
+              })
 
+              throw err;
+            }
 #       - uses: actions/checkout@v2
 
       # - name: Print secret value
