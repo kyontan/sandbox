@@ -1,0 +1,39 @@
+name: prevent-merge-by-user
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  edit-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: cybozu/octoken-action@v1
+        id: octoken
+        with:
+          github_app_id: 155410
+          github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - uses: actions/github-script@v5
+        with:
+          github-token: ${{ steps.octoken.outputs.token }}
+          script: |
+            let sha = context.sha;
+
+            if (context.issue && context.issue.number) {
+              const { data: pullInfo } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: context.issue.number,
+              })
+              sha = pullInfo.head.sha;
+            }
+
+            await github.rest.repos.createCommitStatus({
+              ...context.repo,
+              sha: sha,
+              state: "pending",
+              context: "Restrict merge by user",
+              description: "This check is intentionally made pending.",
+              target_url: "https://example.com/doc-why-this-is-pending",
+            })
