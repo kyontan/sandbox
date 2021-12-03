@@ -98,12 +98,6 @@ jobs:
                 ref: `heads/${pullInfo.base.ref}`,
                 sha: pullInfo.head.sha,
               })
-
-              // delete base branch after merged
-              await github.rest.git.deleteRef({
-                ...context.repo,
-                ref: `heads/${pullInfo.base.ref}`,
-              })
             } catch (err) {
               if (err.message) {
                 await github.rest.issues.createComment({
