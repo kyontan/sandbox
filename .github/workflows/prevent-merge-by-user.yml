@@ -31,6 +31,6 @@ jobs:
               sha: pullInfo.head.sha,
               state: "pending",
               context: "Restrict merge by user",
-              description: "This check is intentionally made pending.",
+              description: "This check is intentionally made pending.  See details for help",
               target_url: "https://example.com/doc-why-this-is-pending",
             })
