@@ -27,6 +27,7 @@ jobs:
           echo "Comment on PR #${{ github.event.issue.number }}"
           echo "Comment body: ${{ github.event.comment.body }}"
           echo "Is force merge: ${{ github.event.comment.body == '/force-merge' }}"
+      - uses: actions/checkout@v2
       - uses: ./.github/actions/fast-forward-merge
         id: fast-forward-merge
         with:
