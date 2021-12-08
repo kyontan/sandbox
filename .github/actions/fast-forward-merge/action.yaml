@@ -24,23 +24,23 @@ runs:
     - if: ${{ !inputs.force }}
       id: check
       uses: actions/github-script@v5
-      github-token: ${{ steps.octoken.outputs.token }}
       with:
+        github-token: ${{ steps.octoken.outputs.token }}
         script: |
           const script = require('./.github/actions/fast-forward-merge/check.js');
           return script({ github, context, core });
     - if: inputs.force
       id: approve-pr-by-bot
       uses: actions/github-script@v5
-      github-token: ${{ steps.octoken.outputs.token }}
       with:
+        github-token: ${{ steps.octoken.outputs.token }}
         script: |
           const script = require('./.github/actions/fast-forward-merge/approve-pr-by-bot.js');
           return script({ github, context, core });
     - id: merge
       uses: actions/github-script@v5
-      github-token: ${{ steps.octoken.outputs.token }}
       with:
+        github-token: ${{ steps.octoken.outputs.token }}
         script: |
           const script = require('./.github/actions/fast-forward-merge/merge.js');
           return script({ github, context, core });
