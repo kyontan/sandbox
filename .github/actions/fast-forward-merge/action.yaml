@@ -1,0 +1,46 @@
+name: fast-forward-merge
+description: merges PR by fast-foward with merge-ability checking
+
+inputs:
+  force:
+    required: false
+    default: false
+    description: If true, this action skips merge-ability checks and approves the PR, then try to merge
+  github_app_id:
+    required: true
+    description: GitHub App ID for git push
+  github_app_private_key:
+    required: true
+    description: GitHub App Private Key for git push
+
+runs:
+  using: composite
+  steps:
+    - uses: cybozu/octoken-action@v1
+      id: octoken
+      with:
+        github_app_id: ${{ inputs.github_app_id }}
+        github_app_private_key: ${{ inputs.github_app_private_key }}
+    - if: !inputs.force
+      id: check
+      uses: actions/github-script@v5
+      github-token: ${{ inputs.github-token }}
+      with:
+        script: |
+          const script = require('./.github/actions/fast-forward-merge/check.js');
+          return script({ github, context, core });
+    - if: inputs.force
+      id: approve-pr-by-bot
+      uses: actions/github-script@v5
+      github-token: ${{ inputs.github-token }}
+      with:
+        script: |
+          const script = require('./.github/actions/fast-forward-merge/approve-pr-by-bot.js');
+          return script({ github, context, core });
+    - id: merge
+    uses: actions/github-script@v5
+      github-token: ${{ inputs.github-token }}
+      with:
+        script: |
+          const script = require('./.github/actions/fast-forward-merge/merge.js');
+          return script({ github, context, core });
