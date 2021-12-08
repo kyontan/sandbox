@@ -21,7 +21,7 @@ runs:
       with:
         github_app_id: ${{ inputs.github_app_id }}
         github_app_private_key: ${{ inputs.github_app_private_key }}
-    - if: !inputs.force
+    - if: ${{ !inputs.force }}
       id: check
       uses: actions/github-script@v5
       github-token: ${{ inputs.github-token }}
