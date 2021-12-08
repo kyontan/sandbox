@@ -21,7 +21,7 @@ runs:
       with:
         github_app_id: ${{ inputs.github_app_id }}
         github_app_private_key: ${{ inputs.github_app_private_key }}
-    - if: ${{ !inputs.force }}
+    - if: ${{ inputs.force == 'false' }}
       id: check
       uses: actions/github-script@v5
       with:
@@ -29,7 +29,7 @@ runs:
         script: |
           const script = require('./.github/actions/fast-forward-merge/check.js');
           return script({ github, context, core });
-    - if: inputs.force
+    - if: ${{ inputs.force == 'true' }}
       id: approve-pr-by-bot
       uses: actions/github-script@v5
       with:
