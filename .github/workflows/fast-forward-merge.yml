@@ -16,12 +16,17 @@ on:
   #       type: environment
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
+
   merge:
     if: |
       github.event.issue.pull_request &&
       (github.event.comment.body == '/merge' || github.event.comment.body == '/force-merge')
     runs-on: ubuntu-latest
-
     steps:
       - run: |
           echo "Comment on PR #${{ github.event.issue.number }}"
