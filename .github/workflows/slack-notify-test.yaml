@@ -13,7 +13,7 @@ jobs:
 
       - name: Set outputs
         id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo "::set-output name=sha_short::$(echo ${GITHUB_SHA} | cut -c1-7)"
       - if: job.status == 'success'
         name: Send notification to Slack
         uses: slackapi/slack-github-action@v1.18.0
