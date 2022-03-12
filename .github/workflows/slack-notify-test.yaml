@@ -1,0 +1,56 @@
+name: slack-notify-test
+
+on:
+  push: {}
+
+jobs:
+  edit-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
+
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - if: job.status == 'success'
+        name: Send notification to Slack
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{( job.status == 'success' && ':white_check_mark: Workflow succeeded.') || ':warning: Workflow failed.'}}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Event*: ${{github.event_name}}\n*Actions URL*: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "image",
+                      "image_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                      "alt_text": "github icon"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "Commit: <https://github.com/${{github.repository}}/commit/${{ steps.vars.outputs.sha_short }}|${{ steps.vars.outputs.sha_short }}>"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
