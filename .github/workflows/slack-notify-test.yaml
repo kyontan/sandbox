@@ -25,15 +25,18 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{( job.status == 'success' && ':white_check_mark: Workflow succeeded.') || ':warning: Workflow failed.'}}"
+                    "text": "Workflow ${{( job.status == 'success' && 'succeeded') || 'failed'}}."
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Event*: ${{github.event_name}}\n*Actions URL*: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                    "text": "*Ref*: ${{github.ref_name}}\n*Workflow*: ${{github.workflow}}\n*Event*: ${{github.event_name}}\n*Actions URL*: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
                   }
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "context",
@@ -42,6 +45,11 @@ jobs:
                       "type": "image",
                       "image_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
                       "alt_text": "github icon"
+                    },
+                    {
+                      "type": "image",
+                      "image_url": "https://raw.githubusercontent.com/kyontan/assets/main/icons/${{( job.status == 'success' && 'check-circle-fill') || 'x-circle-fill'}}.png",
+                      "alt_text": "status icon"
                     },
                     {
                       "type": "mrkdwn",
