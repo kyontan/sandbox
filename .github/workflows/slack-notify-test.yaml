@@ -1,0 +1,32 @@
+name: slack-notify-test
+
+on:
+  push: {}
+
+jobs:
+  expect-success:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
+
+      - name: Send notification to Slack
+        uses: kyontan/slack-notify-action@v0.1.2
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  expect-failure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
+      - name: exit 1
+        run: exit 1
+
+      - name: Send notification to Slack
+        uses: kyontan/slack-notify-action@v0.1.2
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
