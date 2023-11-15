@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - test-generated-files
+      - master
 
 jobs:
   generate:
