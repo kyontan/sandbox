@@ -19,7 +19,7 @@ jobs:
           echo hello > greeting
 
       # push the change if exists
-      - uses: int128/update-generated-files-action@v2
+      - uses: kyontan/update-generated-files-action@v2
         id: generated-files
       - run: |
           echo "the pr number is ${{ steps.generated-files.outputs.pr-number }}"
