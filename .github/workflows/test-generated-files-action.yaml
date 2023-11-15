@@ -16,7 +16,7 @@ jobs:
 
       # something to generate files
       - run: |
-          echo hello > greeting
+          echo hello >> greeting
 
       # push the change if exists
       - uses: kyontan/update-generated-files-action@v2
