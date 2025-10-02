@@ -1,0 +1,22 @@
+name: show all available commands
+
+on:
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: |
+        IFS=:
+        for dir in $PATH
+        do
+            for file in $dir/*
+            do
+                if [ -x $file ]
+                then
+                    echo $file
+                fi
+            done
+        done
